@@ -13,6 +13,7 @@
 
 | # | Qué | Dónde | Cuándo |
 | --- | --- | --- | --- |
+| 0 | Repasar el JavaScript que vas a usar (arrays, objetos, funciones flecha, callbacks, promesas…) | [Repaso de JavaScript](docs/REPASO_JAVASCRIPT.md) | Hoy, **antes de empezar** si estás aprendiendo JS |
 | 1 | Entender qué es una API y REST | [Sección 1](#1-conceptos-qué-es-una-api) + video de midudev | Hoy |
 | 2 | Preparar el proyecto y corregir 2 errores del repo base | [Secciones 3 y 4](#3-preparar-el-proyecto) | Hoy |
 | 3 | Completar la API de **tareas** | [Parte 1](#5-parte-1-completar-la-api-de-tareas) | Hoy |
@@ -109,6 +110,7 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 
 | Recurso | Qué tomar de ahí |
 | --- | --- |
+| 📘 [Repaso de JavaScript](docs/REPASO_JAVASCRIPT.md) | Los conceptos de JS que usa esta práctica, con ejemplos del proyecto y enlaces a las clases gratuitas de [aprendejavascript.dev](https://aprendejavascript.dev) (midudev). |
 | 🎥 [midudev: *Creamos una API desde cero* (clase 2)](https://www.youtube.com/watch?v=YmZE1HXjpd4) | **Obligatorio.** Del módulo `http` nativo a Express, `express.json()`, rutas, `req.body`, códigos de estado y pruebas con un archivo `.http`. |
 | 📁 [midudev/curso-node-js](https://github.com/midudev/curso-node-js) | Código de cada clase. `clase-2`: Express básico. `clase-3`: CRUD de películas. `clase-4`: arquitectura con `routes/`, `controllers/`, `models/`. `clase-5`: bases de datos (para la clase presencial). |
 | 📁 [uniajc-gperezm/newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) | Ejemplo guía de la materia: `crud-api/app.js` (CRUD completo en memoria) y la sección 2 de `2_GUIA_AVANZADA.md` (separar rutas y controladores). |
@@ -124,12 +126,14 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 
 **Requisitos:** Git, VS Code y **Node.js 22.13 o superior** (recomendado: la versión **LTS** actual de [nodejs.org](https://nodejs.org)). Revisa con `node -v`. La versión importa para la clase de base de datos.
 
-1. Haz un **fork** de este repositorio (botón *Fork*, arriba a la derecha).
-2. Clona **tu fork**:
+1. Crea **tu propio repositorio** a partir de esta plantilla: botón verde **Use this template → Create a new repository**.
+   - *Owner:* tu usuario. *Repository name:* `api-tareas-contactos-611`. Visibilidad: **Public**.
+   - No uses *Fork*: en un fork, GitHub Actions viene **desactivado** y no verías tus pruebas automáticas.
+2. Clona **tu** repositorio:
 
    ```bash
-   git clone https://github.com/TU_USUARIO/api-todo-and-contact-list-g611-s2-2026.git
-   cd api-todo-and-contact-list-g611-s2-2026
+   git clone https://github.com/TU_USUARIO/api-tareas-contactos-611.git
+   cd api-tareas-contactos-611
    ```
 
 3. Instala las dependencias (se crea `node_modules/`, que **no** se sube a GitHub gracias al `.gitignore`):
@@ -150,9 +154,14 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 
 ```
 .
-├── package.json              → dependencias (express, nodemon) y scripts (start, dev)
+├── package.json              → dependencias (express, nodemon) y scripts (start, dev, test, sql)
+├── .github/workflows/        → integración continua: corre las pruebas en cada push (no lo modifiques)
+├── tests/                    → pruebas automáticas visibles (no las modifiques)
+├── scripts/sql-playground.js → para practicar SQL (Guía de BD)
 ├── docs/
-│   └── GUIA_BASE_DE_DATOS.md → onboarding e integración de base de datos
+│   ├── REPASO_JAVASCRIPT.md  → los conceptos de JS que usa la práctica
+│   ├── GUIA_BASE_DE_DATOS.md → onboarding e integración de base de datos
+│   └── sql/practica.sql      → ejercicios de SQL
 └── src/
     ├── index.js              → un "Hola mundo" de la clase anterior (no es la API)
     └── server.js             → la API de tareas: GET y POST funcionan; PUT y DELETE están comentados
@@ -173,13 +182,15 @@ Ejecuta `npm start`: imprime *"Hola mundo desde Node.js…"* y termina. Mira `pa
 "dev": "nodemon src/server.js"
 ```
 
-`start` apunta al archivo equivocado. Ambos scripts deben ejecutar **el mismo** punto de entrada:
+`start` apunta al archivo equivocado. Ambos scripts deben ejecutar **el mismo** punto de entrada. Cambia **solo** esas dos líneas (`main` y `start`) y deja los demás scripts como están:
 
 ```json
 "main": "src/server.js",
 "scripts": {
+  "test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
   "start": "node src/server.js",
-  "dev": "nodemon src/server.js"
+  "dev": "nodemon src/server.js",
+  "sql": "node --no-warnings scripts/sql-playground.js"
 }
 ```
 
@@ -246,6 +257,8 @@ app.get('/tareas/:id', (req, res) => {
 
 Prueba: `/tareas/1` → la tarea; `/tareas/999` → `404`.
 
+> 📘 Conceptos de este bloque: [funciones flecha](docs/REPASO_JAVASCRIPT.md#6-funciones-flecha), [`find`](docs/REPASO_JAVASCRIPT.md#4-buscar-y-modificar-en-arrays), [`Number`](docs/REPASO_JAVASCRIPT.md#11-tipos-y-conversiones) y [el `return` que corta la función](docs/REPASO_JAVASCRIPT.md#5-funciones).
+
 ### 1.2 `PUT` y 1.3 `DELETE`
 
 Ya están en `src/server.js`, **comentados**. Descoméntalos y, antes de seguir, responde (como comentario en el código o en `docs/respuestas.md`):
@@ -256,8 +269,9 @@ Ya están en `src/server.js`, **comentados**. Descoméntalos y, antes de seguir,
 
 Después **mejóralos**:
 
+- Cambia `parseInt(req.params.id)` por `Number(req.params.id)`. Pregunta 5: ¿por qué? Pista: compara `parseInt('1abc')` con `Number('1abc')` en la consola. Con `parseInt`, `DELETE /tareas/1abc` borra la tarea 1.
 - Aplica `req.body ?? {}` (Paso 0.2).
-- **Valida** en el `PUT`: si envían `titulo`, no puede estar vacío; si envían `completada`, debe ser booleano (`typeof completada === 'boolean'`). Si no → `400`.
+- **Valida** en el `POST` y el `PUT`: `titulo` debe ser **texto** (`typeof titulo === 'string'`) y no estar vacío; si envían `completada`, debe ser booleano (`typeof completada === 'boolean'`). Si no → `400`. Prueba enviando `{ "titulo": 123 }`: si llamas `titulo.trim()` sin comprobar el tipo, tu API responde `500`.
 
 > **Reto (+):** `PATCH /tareas/:id/completar`, que solo pone `completada: true`. Pregunta 4: ¿en qué se diferencian `PUT` y `PATCH`?
 
@@ -342,6 +356,8 @@ flowchart LR
 
 Úsalo de plantilla y **replícalo para contactos**.
 
+> 📘 Antes de leerlo, repasa [`async`/`await`](docs/REPASO_JAVASCRIPT.md#12-promesas-y-asyncawait) y [`require`/`module.exports`](docs/REPASO_JAVASCRIPT.md#13-módulos-require-y-moduleexports).
+
 **`src/models/tarea.model.js`**
 
 ```js
@@ -396,7 +412,7 @@ async function obtener(req, res) {
 
 async function crear(req, res) {
   const { titulo } = req.body ?? {};
-  if (!titulo || !titulo.trim()) {
+  if (typeof titulo !== 'string' || !titulo.trim()) {
     return res.status(400).json({ error: 'El título es obligatorio' });
   }
   const nueva = await Tarea.crear({ titulo: titulo.trim() });
@@ -520,6 +536,27 @@ Agrega los bloques de **contactos**, con **al menos un caso de error por endpoin
 
 **Opción B: Thunder Client** (extensión de VS Code) o **Postman**: las mismas peticiones con interfaz gráfica.
 
+### Pruebas automáticas (`npm test`)
+
+El repo trae **pruebas automáticas** en `tests/`: levantan tu API con `npm start`, le hacen peticiones y comprueban los códigos de estado y las respuestas que pide esta guía.
+
+```bash
+npm test
+```
+
+- **Detén `npm run dev` antes** (`Ctrl + C`): las pruebas necesitan el puerto 3000 libre.
+- Al principio **casi todas fallan**, y está bien: cada parte que completes pone más pruebas en verde. Lee el mensaje de cada `✖`, que te dice qué falta.
+- **Integración continua (CI):** cada vez que haces `git push`, GitHub corre las mismas pruebas (pestaña **Actions** de tu repo). Junto a cada commit verás ✔ (todas pasan) o ✖ (alguna falla).
+
+| Archivo | Qué revisa |
+| --- | --- |
+| `tests/01-arranque.test.js` | Paso 0: `npm start` levanta la API; `POST` sin body → `400` |
+| `tests/02-tareas.test.js` | Parte 1: los 5 endpoints de `/tareas` |
+| `tests/03-contactos.test.js` | Parte 2: los 5 endpoints de `/contactos` y sus validaciones |
+| `tests/04-estructura.test.js` | Parte 3 y entregables: `routes/`, `controllers/`, `models/`, `api.http`, `.gitignore` |
+
+> ⚠️ **No modifiques `tests/` ni `.github/`.** Al calificar se usan **las pruebas originales del docente**, no las de tu repo, y además hay **pruebas ocultas** con más casos (ids inválidos, tipos de datos incorrectos, campos de más…). Que las pruebas visibles pasen es **necesario, pero no suficiente**: valida bien todo lo que pide la guía, no solo lo que revisan las pruebas.
+
 ### Chuleta de códigos de estado
 
 | Código | Nombre | Cuándo |
@@ -561,7 +598,7 @@ Solo si terminaste todo lo anterior:
 
 ### Qué entregar
 
-- El **enlace a tu fork** con todo subido (`git push`). Medio y fecha límite: los indicará el docente.
+- El **enlace a tu repositorio** (`https://github.com/TU_USUARIO/api-tareas-contactos-611`) con todo subido (`git push`). Medio y fecha límite: los indicará el docente. Se califica el último commit **antes** de la fecha límite.
 - **Commits pequeños con mensajes claros**, al menos uno por parte. Se revisa el historial: un único commit gigante al final resta.
 - `api.http` con las pruebas de tareas y contactos.
 - Respuestas a las preguntas de la Parte 1 (comentarios o `docs/respuestas.md`).
@@ -569,6 +606,7 @@ Solo si terminaste todo lo anterior:
 
 ### Checklist
 
+- [ ] `npm test` pasa en tu máquina y el último commit tiene ✔ en GitHub.
 - [ ] En un clon limpio, `npm install` y `npm start` levantan la API sin errores.
 - [ ] Los 5 endpoints de `/tareas` responden con los códigos de la tabla.
 - [ ] Los 5 endpoints de `/contactos` responden con los códigos de la tabla.
@@ -602,7 +640,10 @@ Solo si terminaste todo lo anterior:
 | `argument handler must be a function` al arrancar | Una ruta apunta a una función que no existe o no exportaste. | Revisa el `module.exports` del controlador. |
 | `Cannot find module '../models/...'` | Ruta o nombre de archivo mal escrito (las mayúsculas cuentan). | Compara el `require` con el nombre real. |
 | Los datos creados desaparecieron | Están en memoria y nodemon reinició el servidor. | Se resuelve con la base de datos. |
+| `npm test`: *Ya hay un servidor en el puerto 3000* | Tienes `npm run dev` corriendo en otra terminal. | Detenlo con `Ctrl + C` y vuelve a correr `npm test`. |
+| `npm test`: *terminó sin dejar la API escuchando* | `npm start` no ejecuta tu servidor, o el servidor se cae al arrancar. | Revisa el Paso 0.1 y lee la salida que muestra la prueba. |
+| En GitHub no aparece la pestaña *Actions* o no corre | Hiciste *Fork* en vez de *Use this template*. | Entra a *Actions* y pulsa *I understand… enable them*, o crea el repo desde la plantilla. |
 
 ---
 
-¿Dudas? Escríbelas como *issue* en tu fork o tráelas a la próxima clase. ¡Éxitos! 🚀
+¿Dudas? Escríbelas como *issue* en tu repositorio o tráelas a la próxima clase. ¡Éxitos! 🚀

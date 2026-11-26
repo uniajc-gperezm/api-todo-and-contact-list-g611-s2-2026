@@ -15,10 +15,21 @@ const { DatabaseSync } = require('node:sqlite');
 const archivo = process.argv[2] ?? path.join('docs', 'sql', 'practica.sql');
 const sql = fs.readFileSync(archivo, 'utf8');
 
-// Quita los comentarios de línea (--) y separa por ; al final de línea
+// Quita el comentario (--) de una línea, sin tocar un -- que esté dentro de
+// un texto entre comillas simples, como 'a--b'.
+function sinComentario(linea) {
+  let enTexto = false;
+  for (let i = 0; i < linea.length; i++) {
+    if (linea[i] === "'") enTexto = !enTexto;
+    else if (!enTexto && linea[i] === '-' && linea[i + 1] === '-') return linea.slice(0, i);
+  }
+  return linea;
+}
+
+// Quita los comentarios y separa por ; al final de línea
 const sentencias = sql
   .split(/\r?\n/)
-  .filter(linea => !linea.trim().startsWith('--'))
+  .map(sinComentario)
   .join('\n')
   .split(/;\s*(?:\n|$)/)
   .map(s => s.trim())

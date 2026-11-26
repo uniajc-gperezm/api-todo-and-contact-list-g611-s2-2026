@@ -257,13 +257,19 @@ fs.mkdirSync(carpetaDatos, { recursive: true }); // crea /data si no existe
 
 const db = new DatabaseSync(path.join(carpetaDatos, 'app.db'));
 
+// ¿La tabla ya existía? (sqlite_master es el "índice" interno de SQLite)
+const existiaTareas = db
+  .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'tareas'")
+  .get() !== undefined;
+
 // Crear las tablas (si no existen) leyendo schema.sql
 const esquema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
 db.exec(esquema);
 
-// Datos iniciales: solo si la tabla está vacía (la primera vez)
-const { total } = db.prepare('SELECT COUNT(*) AS total FROM tareas').get();
-if (total === 0) {
+// Datos iniciales: SOLO cuando la tabla se acaba de crear.
+// (Si revisáramos "tabla vacía", al borrar todas las tareas por la API
+//  y reiniciar, los ejemplos volverían a aparecer.)
+if (!existiaTareas) {
   const insertar = db.prepare('INSERT INTO tareas (titulo) VALUES (?)');
   insertar.run('Aprender Express');
   insertar.run('Crear una API REST');
@@ -366,7 +372,7 @@ module.exports = { obtenerTodas, obtenerPorId, crear, actualizar, eliminar };
 
 1. Agrega el `CREATE TABLE IF NOT EXISTS contactos` a `schema.sql` (usa tu `docs/modelo-datos.md`).
 2. Reescribe `src/models/contacto.model.js` con SQL, siguiendo `tarea.model.js`.
-3. Datos iniciales: inserta 3 contactos inventados solo si la tabla está vacía.
+3. Datos iniciales: inserta 3 contactos inventados **solo cuando la tabla se acaba de crear** (mismo patrón `existiaTareas` de B.4).
 4. Tu `api.http` de contactos debe dar los mismos resultados que en memoria.
 5. Commit: `git commit -m "feat(db): persistencia de tareas y contactos con SQLite"`
 
