@@ -2,10 +2,11 @@
 
 **Fundamentos Web · Grupo 611 · UNIAJC · Semestre 2-2026**
 
-> **Sesión del 26 de noviembre: trabajo autónomo.** El docente no estará en clase ese día; esta guía está escrita para que avances a tu ritmo, solo/a o en pareja.
+> **📅 Entrega: domingo 29 de noviembre de 2026, 11:59 p. m.** · **Jueves 26 de noviembre: sesión de trabajo autónomo** (el docente no estará en clase; esta guía está escrita para que avances a tu ritmo).
 >
-> - **Hoy:** dejas la API funcionando **en memoria** y **bien organizada**, y haces el **onboarding de bases de datos** si nunca has trabajado con una.
-> - **Próxima clase presencial:** conectamos la API a una base de datos **todos juntos**, con la [Guía de Base de Datos](docs/GUIA_BASE_DE_DATOS.md).
+> - **Obligatorio para el 29:** API de tareas y contactos completa y organizada, tu **README con aprendizajes y uso de IA**, y el **onboarding de bases de datos** ([Parte A](docs/GUIA_BASE_DE_DATOS.md#parte-a-onboarding-qué-es-una-base-de-datos)).
+> - **Avance (bonus):** conectar la API a SQLite ([Parte B](docs/GUIA_BASE_DE_DATOS.md#parte-b-conectar-la-api-a-sqlite)). Avanza lo que puedas; la terminamos y revisamos juntos en la próxima clase presencial.
+> - Trabajas en **el mismo repositorio** que ya venías usando ([sección 3](#3-preparar-el-proyecto)).
 
 ---
 
@@ -20,7 +21,8 @@
 | 4 | Construir la API de **contactos** | [Parte 2](#6-parte-2-construir-la-api-de-contactos-desde-cero) | Hoy |
 | 5 | Organizar en rutas / controladores / modelos | [Parte 3](#7-parte-3-organizar-el-código-rutas-controladores-y-modelos) | Hoy |
 | 6 | Onboarding de bases de datos (SQL básico) | [Guía BD, Parte A](docs/GUIA_BASE_DE_DATOS.md#parte-a-onboarding-qué-es-una-base-de-datos) | Hoy (obligatorio si nunca has usado BD) |
-| 7 | Conectar la API a SQLite | [Guía BD, Parte B](docs/GUIA_BASE_DE_DATOS.md#parte-b-conectar-la-api-a-sqlite-en-clase) | **En clase** |
+| 7 | Conectar la API a SQLite | [Guía BD, Parte B](docs/GUIA_BASE_DE_DATOS.md#parte-b-conectar-la-api-a-sqlite) | Avance autónomo (bonus); se termina en clase |
+| 8 | Escribir tu README: aprendizajes y uso de IA | [Sección 11](#11-entrega-y-criterios-de-evaluación) | Antes del domingo 29, 11:59 p. m. |
 
 ## Contenido
 
@@ -55,7 +57,7 @@ Una API define **qué pedidos se pueden hacer**, **cómo** hacerlos y **qué se 
 sequenceDiagram
     participant C as Cliente (navegador, Thunder Client…)
     participant A as API Express
-    participant D as Datos (arreglo hoy, BD en clase)
+    participant D as Datos (arreglo, luego base de datos)
     C->>A: POST /tareas {"titulo": "Estudiar"}
     A->>A: Validar el body
     A->>D: Guardar la tarea
@@ -127,7 +129,38 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 
 ## 3. Preparar el proyecto
 
-**Requisitos:** Git, VS Code y **Node.js 22.13 o superior** (recomendado: la versión **LTS** actual de [nodejs.org](https://nodejs.org)). Revisa con `node -v`. La versión importa para la clase de base de datos.
+**Requisitos:** Git, VS Code y **Node.js 22.13 o superior** (recomendado: la versión **LTS** actual de [nodejs.org](https://nodejs.org)). Revisa con `node -v`. La versión importa para la base de datos.
+
+### Camino A: ya tienes tu repositorio de la API (la mayoría)
+
+Sigue trabajando en **tu mismo repo**. Solo trae de esta plantilla las carpetas nuevas (pruebas, guías y playground de SQL), **sin tocar tu código ni tu README**. Desde la carpeta de tu proyecto:
+
+```bash
+git remote add plantilla https://github.com/uniajc-gperezm/api-todo-and-contact-list-g611-s2-2026.git
+git fetch plantilla
+git checkout plantilla/main -- tests .github scripts docs
+```
+
+> Si `git remote add` dice `remote plantilla already exists`, sáltate esa línea. `git checkout plantilla/main -- <carpetas>` copia **solo esas carpetas** a tu proyecto; no borra ni cambia nada más.
+
+Luego agrega estos dos scripts a la sección `"scripts"` de **tu** `package.json` (deja los que ya tienes):
+
+```json
+"test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
+"sql": "node --no-warnings scripts/sql-playground.js"
+```
+
+Y guarda el cambio:
+
+```bash
+git add .
+git commit -m "chore: traer pruebas, guías y playground SQL de la plantilla"
+git push
+```
+
+> Si tu repo es un **fork**, entra a la pestaña **Actions** de tu repo en GitHub y actívalas (*I understand my workflows, go ahead and enable them*) para ver tus pruebas en cada push.
+
+### Camino B: aún no tienes repositorio
 
 1. Crea **tu propio repositorio** a partir de esta plantilla: botón verde **Use this template → Create a new repository**.
    - *Owner:* tu usuario. *Repository name:* `api-tareas-contactos-611`. Visibilidad: **Public**.
@@ -138,6 +171,8 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
    git clone https://github.com/TU_USUARIO/api-tareas-contactos-611.git
    cd api-tareas-contactos-611
    ```
+
+### En ambos casos
 
 3. Instala las dependencias (se crea `node_modules/`, que **no** se sube a GitHub gracias al `.gitignore`):
 
@@ -354,7 +389,7 @@ flowchart LR
 | **Controlador** | Leer `req`, validar, llamar al modelo, elegir el código de estado. | …saber dónde se guardan los datos. |
 | **Modelo** | Leer y escribir los datos. | …conocer `req` ni `res`. |
 
-> **¿Por qué el modelo?** Porque en la clase de base de datos **solo reescribiremos `models/`**. Rutas y controladores no cambian. Es lo mismo que hace midudev en la clase 5: tiene `models/local-file-system/` y `models/mysql/` con las **mismas funciones**, y cambia uno por otro. Si hoy pones `tareas.push(...)` dentro del controlador, en clase te tocará reescribir todo.
+> **¿Por qué el modelo?** Porque al conectar la base de datos (Parte B de la guía de BD) **solo se reescribe `models/`**. Rutas y controladores no cambian. Es lo mismo que hace midudev en la clase 5: tiene `models/local-file-system/` y `models/mysql/` con las **mismas funciones**, y cambia uno por otro. Si pones `tareas.push(...)` dentro del controlador, al conectar la base de datos te tocará reescribir todo.
 
 ### Ejemplo con tareas
 
@@ -580,10 +615,10 @@ Hoy los datos viven en un arreglo: **si el servidor se reinicia, se pierden**. C
 
 La solución es una **base de datos**. Todo está en **[docs/GUIA_BASE_DE_DATOS.md](docs/GUIA_BASE_DE_DATOS.md)**:
 
-- **Parte A: Onboarding (hoy, autónomo).** Qué es una base de datos, tablas, SQL básico y práctica guiada con las tablas `tareas` y `contactos`. **Obligatoria si nunca has trabajado con bases de datos**; repaso recomendado para los demás.
-- **Parte B: Integración (en clase).** Conectar la API a **SQLite** reescribiendo solo los modelos. No la adelantes; si quieres, léela.
+- **Parte A: Onboarding (obligatoria para el 29).** Qué es una base de datos, tablas, SQL básico y práctica guiada con las tablas `tareas` y `contactos`, con dos entregables.
+- **Parte B: Integración (avance autónomo, bonus).** Conectar la API a **SQLite** reescribiendo solo los modelos. Avanza lo que puedas siguiendo la guía; la terminamos y revisamos juntos en la próxima clase presencial.
 
-Para llegar a clase preparado/a: Parte 3 terminada y la Parte A de la guía hecha, con sus entregables.
+**Orden recomendado:** Parte 3 terminada → Parte A → Parte B. No empieces la Parte B si tus controladores todavía tocan el arreglo directamente.
 
 ---
 
@@ -602,7 +637,14 @@ Solo si terminaste todo lo anterior:
 
 ### Qué entregar
 
-- El **enlace a tu repositorio** (`https://github.com/TU_USUARIO/api-tareas-contactos-611`) con todo subido (`git push`). Medio y fecha límite: los indicará el docente. Se califica el último commit **antes** de la fecha límite.
+**Fecha límite: domingo 29 de noviembre de 2026, 11:59 p. m.** Se califica el **último commit anterior** a esa hora: lo que subas después no cuenta.
+
+- El **enlace a tu repositorio** en GitHub (el mismo que venías usando), con todo subido (`git push`).
+- **Tu `README.md` con tu documentación**, no con esta guía. Si creaste el repo desde la plantilla, **reemplaza** el contenido; esta guía sigue disponible en el repo del docente. Debe tener:
+  1. **Descripción** del proyecto y **cómo ejecutarlo** (`npm install`, `npm start`, `npm test`).
+  2. **Endpoints** de tareas y contactos: tabla con método, ruta y qué hace.
+  3. **Aprendizajes**: qué aprendiste, qué se te dificultó y cómo lo resolviste.
+  4. **Uso de IA**: qué herramienta usaste (ChatGPT, Copilot, Gemini, Claude…), **para qué** (explicar un concepto, encontrar un error, generar código…), un par de ejemplos de lo que le pediste y **qué corregiste o verificaste** de lo que te respondió. Si no usaste IA, dilo.
 - **Commits pequeños con mensajes claros**, al menos uno por parte. Se revisa el historial: un único commit gigante al final resta.
 - `api.http` con las pruebas de tareas y contactos.
 - Respuestas a las preguntas de la Parte 1 (comentarios o `docs/respuestas.md`).
@@ -617,16 +659,19 @@ Solo si terminaste todo lo anterior:
 - [ ] Ningún `POST`/`PUT` con datos inválidos o sin body devuelve `500`.
 - [ ] El código está en `routes/`, `controllers/` y `models/`, y los controladores **no** tocan el arreglo.
 - [ ] `node_modules/` **no** está en el repositorio.
+- [ ] Tu `README.md` es **tuyo**: ejecución, endpoints, aprendizajes y uso de IA.
 
 ### Criterios
 
 | Criterio | Peso |
 | --- | --- |
-| Paso 0 corregido y API de tareas completa | 25 % |
-| API de contactos completa con validaciones | 25 % |
-| Arquitectura rutas / controladores / modelos | 25 % |
+| Paso 0 corregido y API de tareas completa (`GET`, `POST`, `PUT`, `DELETE`) | 20 % |
+| API de contactos completa con validaciones | 20 % |
+| Arquitectura rutas / controladores / modelos | 20 % |
 | `api.http` con casos de éxito **y** de error | 10 % |
+| README: cómo ejecutar, endpoints, **aprendizajes** y **uso de IA** | 15 % |
 | Onboarding BD (`practica.sql` + `modelo-datos.md`), respuestas y commits | 15 % |
+| **Bonus:** API conectada a SQLite, con datos que sobreviven a un reinicio (Parte B) | +10 % |
 
 > Debes poder **explicar en clase** el código que entregas. Usar IA o repos de referencia para entender está bien; entregar código que no sabes explicar, no.
 
