@@ -14,7 +14,7 @@
 | # | Qué | Dónde | Cuándo |
 | --- | --- | --- | --- |
 | 0 | Repasar el JavaScript que vas a usar (arrays, objetos, funciones flecha, callbacks, promesas…) | [Repaso de JavaScript](docs/REPASO_JAVASCRIPT.md) | Hoy, **antes de empezar** si estás aprendiendo JS |
-| 1 | Entender qué es una API y REST | [Sección 1](#1-conceptos-qué-es-una-api) + video de midudev | Hoy |
+| 1 | Entender qué es una API, REST y cómo viaja una petición HTTP | [Sección 1](#1-conceptos-qué-es-una-api) + [HTTP y Express](docs/HTTP_Y_EXPRESS.md) + video de midudev | Hoy |
 | 2 | Preparar el proyecto y corregir 2 errores del repo base | [Secciones 3 y 4](#3-preparar-el-proyecto) | Hoy |
 | 3 | Completar la API de **tareas** | [Parte 1](#5-parte-1-completar-la-api-de-tareas) | Hoy |
 | 4 | Construir la API de **contactos** | [Parte 2](#6-parte-2-construir-la-api-de-contactos-desde-cero) | Hoy |
@@ -63,6 +63,8 @@ sequenceDiagram
     A-->>C: 201 Created + JSON de la tarea
 ```
 
+> 📗 **¿Cómo es por dentro una petición HTTP?** Método, URL, headers, body, códigos de estado y el recorrido de la petición dentro de Express (middlewares, rutas, `req` y `res`), con ejemplos reales de esta API: **[docs/HTTP_Y_EXPRESS.md](docs/HTTP_Y_EXPRESS.md)**. Léelo antes de la Parte 1.
+
 ### Node.js y Express
 
 - **Node.js** permite ejecutar JavaScript **fuera del navegador**, en el servidor (la cocina). Con él construimos lógica de negocio, accedemos a bases de datos y creamos APIs.
@@ -110,6 +112,7 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 
 | Recurso | Qué tomar de ahí |
 | --- | --- |
+| 📗 [HTTP y Express](docs/HTTP_Y_EXPRESS.md) | Anatomía de petición y respuesta, métodos, códigos de estado, `Content-Type`, middlewares y la chuleta de `req`/`res`, con capturas reales de esta API. |
 | 📘 [Repaso de JavaScript](docs/REPASO_JAVASCRIPT.md) | Los conceptos de JS que usa esta práctica, con ejemplos del proyecto y enlaces a las clases gratuitas de [aprendejavascript.dev](https://aprendejavascript.dev) (midudev). |
 | 🎥 [midudev: *Creamos una API desde cero* (clase 2)](https://www.youtube.com/watch?v=YmZE1HXjpd4) | **Obligatorio.** Del módulo `http` nativo a Express, `express.json()`, rutas, `req.body`, códigos de estado y pruebas con un archivo `.http`. |
 | 📁 [midudev/curso-node-js](https://github.com/midudev/curso-node-js) | Código de cada clase. `clase-2`: Express básico. `clase-3`: CRUD de películas. `clase-4`: arquitectura con `routes/`, `controllers/`, `models/`. `clase-5`: bases de datos (para la clase presencial). |
@@ -159,6 +162,7 @@ En el repo [newspaper-api](https://github.com/uniajc-gperezm/newspaper-api) ves 
 ├── tests/                    → pruebas automáticas visibles (no las modifiques)
 ├── scripts/sql-playground.js → para practicar SQL (Guía de BD)
 ├── docs/
+│   ├── HTTP_Y_EXPRESS.md     → cómo funciona HTTP y cómo lo maneja Express
 │   ├── REPASO_JAVASCRIPT.md  → los conceptos de JS que usa la práctica
 │   ├── GUIA_BASE_DE_DATOS.md → onboarding e integración de base de datos
 │   └── sql/practica.sql      → ejercicios de SQL
