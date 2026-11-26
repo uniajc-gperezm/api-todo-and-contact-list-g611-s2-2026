@@ -6,8 +6,8 @@ Esta guía tiene dos partes:
 
 | Parte | Para quién | Cuándo | Tiempo aprox. |
 | --- | --- | --- | --- |
-| **[A. Onboarding](#parte-a-onboarding-qué-es-una-base-de-datos)**: qué es una base de datos y SQL básico | **Obligatoria** si nunca has trabajado con bases de datos. Repaso para los demás. | Sesión autónoma (26 de nov.) | 1,5 a 2 horas |
-| **[B. Integración](#parte-b-conectar-la-api-a-sqlite-en-clase)**: conectar tu API a SQLite | Todo el curso | **En clase**, todos juntos | 1 clase |
+| **[A. Onboarding](#parte-a-onboarding-qué-es-una-base-de-datos)**: qué es una base de datos y SQL básico | **Todo el curso.** Si nunca has trabajado con bases de datos, empieza aquí. | **Obligatoria** · entrega domingo 29 de nov., 11:59 p. m. | 1,5 a 2 horas |
+| **[B. Integración](#parte-b-conectar-la-api-a-sqlite)**: conectar tu API a SQLite | Todo el curso | **Avance autónomo (bonus)** · se termina y revisa en la próxima clase presencial | 2 a 3 horas |
 
 **Prerrequisito de la Parte B:** tener la Parte 3 del README terminada (código separado en `routes/`, `controllers/` y `models/`).
 
@@ -183,14 +183,16 @@ El repo trae un **playground** que ejecuta un archivo `.sql` contra una base de 
 | 📰 [freeCodeCamp en español: *Aprende SQL, curso desde cero* (Sergie Code)](https://www.freecodecamp.org/espanol/news/aprende-sql-curso-desde-cero-en-espanol/) | Curso gratis de SQL. Para este onboarding bastan las secciones de fundamentos: tablas, tipos, `CREATE`, `INSERT`, `SELECT`, `UPDATE`, `DELETE`. |
 | 🎥 [midudev, clase 5: *Crea una base de datos MySQL y evita los hackers*](https://www.youtube.com/watch?v=eCWNQfzuuso) | La misma API de películas de las clases anteriores conectada a **MySQL**. Fíjate en dos cosas: que **solo cambia el modelo** y la parte de **inyección SQL**. Usa MySQL (requiere instalarlo); nosotros usaremos SQLite, pero los conceptos son los mismos. |
 | 📁 [midudev/curso-node-js, `clase-5`](https://github.com/midudev/curso-node-js/tree/main/clase-5) | Código de la clase anterior: compara `models/local-file-system/movie.js` con `models/mysql/movie.js`. Mismas funciones, distinto almacenamiento. |
-| 📄 [Node.js: documentación de `node:sqlite`](https://nodejs.org/api/sqlite.html) | Referencia oficial del módulo que usaremos en clase (en inglés). |
+| 📄 [Node.js: documentación de `node:sqlite`](https://nodejs.org/api/sqlite.html) | Referencia oficial del módulo que usarás en la Parte B (en inglés). |
 | 📄 [`3_GUIA_SQLITE.md` de newspaper-api](https://github.com/uniajc-gperezm/newspaper-api/blob/main/3_GUIA_SQLITE.md) | La misma idea aplicada a la API de noticias, con las librerías `sqlite` + `sqlite3`. Útil como segunda explicación. |
 
 ---
 
-## Parte B: Conectar la API a SQLite (en clase)
+## Parte B: Conectar la API a SQLite
 
-> 🧑‍🏫 **Esta parte la hacemos juntos en clase.** Puedes leerla antes, pero no la adelantes sola/o: así llegamos todos al mismo punto.
+> 🚀 **Avance autónomo (bonus).** Síguela paso a paso cuando tengas terminadas la Parte 3 del README y la Parte A de esta guía. Si llegas hasta B.7 con tareas funcionando, ya tienes el bonus en camino; B.8 (contactos) lo completamos y revisamos juntos en la próxima clase presencial.
+>
+> **Antes de empezar, haz commit** de lo que tienes funcionando (`git add . && git commit -m "..."`). Si algo se rompe en la Parte B, vuelves a ese punto con `git restore .`.
 
 ### B.1 El plan
 
@@ -238,7 +240,7 @@ CREATE TABLE IF NOT EXISTS tareas (
   completada INTEGER NOT NULL DEFAULT 0
 );
 
--- TODO (en clase): CREATE TABLE IF NOT EXISTS contactos (...)
+-- TODO (B.8): CREATE TABLE IF NOT EXISTS contactos (...)
 -- Usa el diseño de tu docs/modelo-datos.md
 ```
 
@@ -368,7 +370,7 @@ module.exports = { obtenerTodas, obtenerPorId, crear, actualizar, eliminar };
 3. **La prueba de fuego:** crea una tarea, detén el servidor (`Ctrl + C`), vuélvelo a iniciar y haz `GET /tareas`. **La tarea sigue ahí.** 🎉
 4. *(Opcional)* Para ver la BD como tabla, instala en VS Code la extensión **SQLite Viewer** y abre `data/app.db`.
 
-### B.8 Ejercicio en clase: contactos
+### B.8 Ejercicio: contactos (avánzalo; lo cerramos en clase)
 
 1. Agrega el `CREATE TABLE IF NOT EXISTS contactos` a `schema.sql` (usa tu `docs/modelo-datos.md`).
 2. Reescribe `src/models/contacto.model.js` con SQL, siguiendo `tarea.model.js`.
