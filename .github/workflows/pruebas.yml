@@ -1,0 +1,28 @@
+# Integración continua: en cada push y pull request GitHub instala el
+# proyecto y corre `npm test`. Verás el resultado en la pestaña "Actions"
+# y como ✔ / ✖ junto a cada commit.
+# No modifiques este archivo.
+name: Pruebas
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Correr pruebas
+        run: npm test
